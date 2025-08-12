@@ -89,9 +89,14 @@ function LandingPage() {
         try {
             const cleanedText = preprocessText(text);
             // const res = await axios.post('http://localhost:5000/api/sentiment', { text: cleanedText });
-            const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const API_BASE = import.meta.env.VITE_API_URL || 'https://moodify-gen-ai.onrender.com';
             const res = await axios.post(`${API_BASE}/api/sentiment`, { text: cleanedText });
-            const resultArray = res.data.result[0];
+            const resultArray = res?.data?.result?.[0] || [];
+               if (resultArray.length === 0) {
+                   console.error("No sentiment data returned");
+                return;
+}
+
             const dataResult = resultArray.reduce((prev, current) => {
                 return prev.score > current.score ? prev : current;
             });
